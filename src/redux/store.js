@@ -9,7 +9,7 @@ console.log(getDefaultMiddleware());
 }); */
 //console.log(process.env);
 //const store = createStore(rootReducer, composeWithDevTools());
-const middleware = [...getDefaultMiddleware(), logger];
+const middleware = [...getDefaultMiddleware({ serializableCheck: false }), logger];
 const store = configureStore({
   reducer: {
     app: appReducer,
