@@ -1,65 +1,15 @@
-//import types from "./app-types";
-import axios from "axios";
-import { createAction } from "@reduxjs/toolkit";
-//import { uuid } from "uuidv4";
+import { createAction } from '@reduxjs/toolkit';
 
-axios.defaults.baseURL = "http://localhost:4040";
+export const fetchContactsRequest = createAction('contacts/fetchContactsRequest');
+export const fetchContactsSuccess = createAction('contacts/fetchContactsSuccess');
+export const fetchContactsError = createAction('contacts/fetchContactsError');
 
-/* const addContact = (contactData) => ({
-  type: types.ADD_CONTACT,
-  payload: {
-    id: uuid(),
-    name: contactData.name,
-    number: contactData.number,
-  },
-}); */
-//----------------------------------------------------------------------
-/* const addContact = createAction("app/addContact", (contactData) => {
-  return {
-    payload: {
-      id: uuid(),
-      name: contactData.name,
-      number: contactData.number,
-    },
-  };
-}); */
-//-----------------------------------------------------------------------
+export const addContactRequest = createAction('contacts/addContactRequest');
+export const addContactSuccess = createAction('contacts/addContactSuccess');
+export const addContactError = createAction('contacts/addContactError');
 
-const addContactRequest = createAction("contacts/addContactRequest");
-const addContactSuccess = createAction("contacts/addContactSuccess");
-const addContactError = createAction("contacts/addContactError");
+export const deleteContactRequest = createAction('contacts/deleteContactRequest');
+export const deleteContactSuccess = createAction('contacts/deleteContactSuccess');
+export const deleteContactError = createAction('contacts/deleteContactError');
 
-const deleteContactRequest = createAction("contacts/deleteContactRequest");
-const deleteContactSuccess = createAction("contacts/deleteContactSuccess");
-const deleteContactError = createAction("contacts/deleteContactError");
-
-const fetchContactRequest = createAction("contacts/fetchContactRequest");
-const fetchContactSuccess = createAction("contacts/fetchContactSuccess");
-const fetchContactError = createAction("contacts/fetchContactError");
-
-/* const deleteContact = (contactId) => ({
-  type: types.DELETE_CONTACT,
-  payload: { contactId: contactId },
-}); */
-//const deleteContact = createAction("app/deleteContact");
-
-/* const filterSet = (str) => ({
-  type: types.FILTER_SET,
-  payload: str,
-});
- */
-
-const filterSet = createAction("app/setFilterArr");
-
-export default {
-  filterSet,
-  addContactRequest,
-  addContactSuccess,
-  addContactError,
-  deleteContactRequest,
-  deleteContactSuccess,
-  deleteContactError,
-  fetchContactRequest,
-  fetchContactSuccess,
-  fetchContactError,
-};
+export const changeFilter = createAction('contacts/changeFilter');

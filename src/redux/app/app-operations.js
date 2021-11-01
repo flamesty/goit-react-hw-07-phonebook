@@ -1,43 +1,57 @@
-import axios from "axios";
-import actions from "./app-actions";
+import axios from 'axios';
+import {
+  fetchContactsRequest,
+  fetchContactsSuccess,
+  fetchContactsError,
+  addContactRequest,
+  addContactSuccess,
+  addContactError,
+  deleteContactRequest,
+  deleteContactSuccess,
+  deleteContactError,
+} from './app-actions';
 
-/* const fetchContacts = () => dispatch => {
-  dispatch(actions.fetchContactRequest());
-  axios
-    .get("/contacts")
-    .then(({ data }) => dispatch(actions.fetchContactSuccess(data)))
-    .catch((error) => dispatch(actions.deleteContactError(error)));
-}; */
+axios.get("http://localhost:3000/db.json")
 
-//ASYNC Version
-const fetchContacts = () => async (dispatch) => {
-  dispatch(actions.fetchContactRequest());
+const fetchContacts = () => async dispatch => {
+  dispatch(fetchContactsRequest());
   try {
-    const { data } = await axios.get("/contacts");
-    dispatch(actions.fetchContactSuccess(data));
+    const { data } = await axios.get('/app-contacts');
+    dispatch(fetchContactsSuccess(data));
   } catch (error) {
-    dispatch(actions.deleteContactError(error));
+    dispatch(fetchContactsError(error));
   }
 };
-const addContact = (contact) => (dispatch) => {
-  dispatch(actions.addContactRequest());
 
-  axios
-    .post("/contacts", contact)
-    .then(({ data }) => dispatch(actions.addContactSuccess(data)))
-    .catch((error) => dispatch(actions.addContactError(error)));
+const addContact = (name, number) => async dispatch => {
+  const contact = {
+    name,
+    number,
+  };
+
+  dispatch(addContactRequest());
+
+  try {
+    const { data } = await axios.post('/app-contacts', contact);
+    dispatch(addContactSuccess(data));
+  } catch (error) {
+    dispatch(addContactError(error));
+  }
 };
 
-const deleteContact = (contactId) => (dispatch) => {
-  dispatch(actions.deleteContactRequest());
-  axios
-    .delete(`/contacts/${contactId}`)
-    .then(() => dispatch(actions.deleteContactSuccess(contactId)))
-    .catch((error) => dispatch(actions.deleteContactError(error)));
+const deleteContact = id => async dispatch => {
+  dispatch(deleteContactRequest());
+  try {
+    await axios.delete(`/app-contacts/${id}`);
+    dispatch(deleteContactSuccess(id));
+  } catch (error) {
+    dispatch(deleteContactError(error));
+  }
 };
 
-export default {
+const contactsOperations = {
   fetchContacts,
   addContact,
   deleteContact,
 };
+export default contactsOperations;

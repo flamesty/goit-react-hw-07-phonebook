@@ -1,71 +1,94 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+import { AiOutlineUserAdd } from 'react-icons/ai';
 import s from './ContactForm.module.css';
+import shortid from 'shortid';
+import { useSelector, useDispatch } from 'react-redux';
+import contactsOperations from '../../redux/app/app-operations';
+import { getContacts } from '../../redux/app/app-selectors';
 
+export default function ContactForm() {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-class ContactForm extends Component {
-  state = {
-    name: "",
-    number: "",
-  };
-  handleChange = (e) => {
+  const contactNameId = shortid.generate();
+  const contactNumberId = shortid.generate();
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
+  const handleChange = e => {
     const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        return;
+    }
   };
 
-  handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    let contactForAdd = { name: this.state.name, number: this.state.number };
 
-    this.props.onSubmitData(contactForAdd);
+    if (name === '') {
+      alert(`Введите, пожалуйста, имя контакта.`);
+      return;
+    }
 
-    this.reset();
+    if (number === '') {
+      alert(`Введите, пожалуйста, номер телефона контакта.`);
+      return;
+    }
+
+    if (contacts.find(contact => contact.name === name)) {
+      alert(`${name} is already in contacts.`);
+      reset();
+      return;
+    }
+    dispatch(contactsOperations.addContact(name, number));
+    reset();
   };
 
-  reset = () => {
-    this.setState({ name: "", number: "" });
+  const reset = () => {
+    setName('');
+    setNumber('');
   };
-  render() {
-    return (
-        <form type="submit" onSubmit={this.handleSubmit} className={s.form}>
-          <label className={s.label}>
-            Name
-            <input
-              className={s.input}
-              type="text"
-              name="name"
-              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-              required
-              onChange={this.handleChange}
-              value={this.state.name}
-            />
-          </label>
-          <label className={s.label}>
-            Number
-            <input
-              className={s.input}
-              type="tel"
-              name="number"
-              pattern="(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})"
-              title="Номер телефона должен состоять из 11-12 цифр и может содержать цифры, пробелы, тире, пузатые скобки и может начинаться с +"
-              required
-              onChange={this.handleChange}
-              value={this.state.number}
-            />
-          </label>
 
-          <button
-            type="submit"
-            className={s.btn}>
-            Add contact
-          </button>
-        </form>
-    );
-  }
+  return (
+    <form className={s.form} onSubmit={handleSubmit}>
+      <label className={s.label} htmlFor={contactNameId}>
+        Name
+        <input
+          className={s.input}
+          type="text"
+          name="name"
+          value={name}
+          onChange={handleChange}
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+          id={contactNameId}
+        />
+      </label>
+      <label className={s.label} htmlFor={contactNumberId}>
+        Number
+        <input
+          className={s.input}
+          type="text"
+          name="number"
+          value={number}
+          onChange={handleChange}
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+          id={contactNumberId}
+        />
+      </label>
+      <button className={s.btn} type="submit">
+        <span className={s.btn}>Add contact</span>
+        <AiOutlineUserAdd size="20px" color="rgb(130, 27, 112)" />
+      </button>
+    </form>
+  );
 }
-
-ContactForm.propTypes = {
-  onSubmitData: PropTypes.func.isRequired,
-};
-export default ContactForm;

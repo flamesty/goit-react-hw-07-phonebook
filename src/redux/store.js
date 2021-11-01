@@ -1,21 +1,27 @@
-//import { combineReducers } from "redux";
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import logger from "redux-logger";
-import appReducer from "./app/app-reducer";
+import { configureStore } from '@reduxjs/toolkit';
+import contactsReducer from './app/app-reducer';
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 
-console.log(getDefaultMiddleware());
-/* const rootReducer = combineReducers({
-  app: appReducer,
-}); */
-//console.log(process.env);
-//const store = createStore(rootReducer, composeWithDevTools());
-const middleware = [...getDefaultMiddleware({ serializableCheck: false }), logger];
+import logger from 'redux-logger';
+
 const store = configureStore({
   reducer: {
-    app: appReducer,
+    contacts: contactsReducer,
   },
-  middleware,
-  devTools: process.env.NODE_ENV === "development",
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(logger),
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export default store;

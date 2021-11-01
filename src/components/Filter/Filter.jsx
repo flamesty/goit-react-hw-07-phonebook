@@ -1,27 +1,31 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getFilter } from '../../redux/app/app-selectors';
+import * as contactsActions from '../../redux/app/app-actions';
+
 import PropTypes from 'prop-types';
 import s from './Filter.module.css';
 
-class Filter extends Component {
-  setFilterValue = event => {
-    let value = event.currentTarget.value.toUpperCase();
-    this.props.setFilterToState(value);
-  };
+const Filter = () => {
+  const value = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  render() {
-    return (
-      <div>
-        <h4>Find contacts by name</h4>
-        <input
-          onChange={this.setFilterValue}
-          className={s.input}>  
-        </input>
-      </div>
-    );
-  }
-}
+  return (
+    <label className={s.label}>
+      Find contacts by name
+      <input
+        className={s.input}
+        type="text"
+        value={value}
+        onChange={e => dispatch(contactsActions.changeFilter(e.target.value))}
+      />
+    </label>
+  );
+};
 
 Filter.propTypes = {
-  setFilterToState: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
 };
+
 export default Filter;

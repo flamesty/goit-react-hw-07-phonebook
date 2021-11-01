@@ -1,43 +1,46 @@
-import { combineReducers } from "redux";
-import { createReducer } from "@reduxjs/toolkit";
-import actions from "./app-actions";
-import operations from "./app-operations";
+import { combineReducers } from 'redux';
+import { createReducer } from '@reduxjs/toolkit';
+import {
+  addContactRequest,
+  addContactSuccess,
+  addContactError,
+  deleteContactRequest,
+  deleteContactSuccess,
+  deleteContactError,
+  fetchContactsRequest,
+  fetchContactsSuccess,
+  fetchContactsError,
+  changeFilter,
+} from './app-actions';
 
-const contacts = createReducer([], {
-  [actions.fetchContactSuccess]: (_, { payload }) => payload,
-  [actions.addContactSuccess]: (state, { payload }) => [...state, payload],
-
-  [operations.addContact]: (state, { type, payload }) => {
-    let nameArray = state.map((cur) => cur.name);
-    if (!nameArray.includes(payload.name)) {
-      return [...state, payload];
-    } else {
-      alert(" Контакт вже є у телефонній книзі!!!");
-      return state;
-    }
-  },
-  [actions.deleteContactSuccess]: (state, { types, payload }) => {
-    let newArrAfterDel = state.filter((elem) => elem.id !== payload);
-    return [...newArrAfterDel];
-  },
+const items = createReducer([], {
+  [fetchContactsSuccess]: (_, { payload }) => payload,
+  [addContactSuccess]: (state, { payload }) => [...state, payload],
+  [deleteContactSuccess]: (state, { payload }) =>
+    state.filter(({ id }) => id !== payload),
 });
+
+const filter = createReducer('', {
+  [changeFilter]: (_, { payload }) => payload,
+});
+
+// const error = createReducer(null, {});
 
 const loading = createReducer(false, {
-  [actions.addContactRequest]: () => true,
-  [actions.addContactSuccess]: () => false,
-  [actions.addContactError]: () => false,
-  [actions.deleteContactRequest]: () => true,
-  [actions.deleteContactSuccess]: () => false,
-  [actions.deleteContactError]: () => false,
-  [actions.fetchContactRequest]: () => true,
-  [actions.fetchContactSuccess]: () => false,
-  [actions.fetchContactError]: () => false,
+  [fetchContactsRequest]: () => true,
+  [fetchContactsSuccess]: () => false,
+  [fetchContactsError]: () => false,
+  [addContactRequest]: () => true,
+  [addContactSuccess]: () => false,
+  [addContactError]: () => false,
+  [deleteContactRequest]: () => true,
+  [deleteContactSuccess]: () => false,
+  [deleteContactError]: () => false,
 });
 
-const filters = createReducer("", {
-  [actions.filterSet]: (state, { payload }) => {
-    return payload;
-  },
+export default combineReducers({
+  items,
+  filter,
+  loading,
+  // error,
 });
-
-export default combineReducers({ contacts, filters, loading });
