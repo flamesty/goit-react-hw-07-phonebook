@@ -11,12 +11,12 @@ import {
   deleteContactError,
 } from './app-actions';
 
-axios.get("http://localhost:3000/db.json")
+axios.get("http://localhost:4040/contacts")
 
 const fetchContacts = () => async dispatch => {
   dispatch(fetchContactsRequest());
   try {
-    const { data } = await axios.get('/app-contacts');
+    const { data } = await axios.get('http://localhost:4040/contacts');
     dispatch(fetchContactsSuccess(data));
   } catch (error) {
     dispatch(fetchContactsError(error));
@@ -32,7 +32,7 @@ const addContact = (name, number) => async dispatch => {
   dispatch(addContactRequest());
 
   try {
-    const { data } = await axios.post('/app-contacts', contact);
+    const { data } = await axios.post('http://localhost:4040/contacts', contact);
     dispatch(addContactSuccess(data));
   } catch (error) {
     dispatch(addContactError(error));
@@ -42,7 +42,7 @@ const addContact = (name, number) => async dispatch => {
 const deleteContact = id => async dispatch => {
   dispatch(deleteContactRequest());
   try {
-    await axios.delete(`/app-contacts/${id}`);
+    await axios.delete(`http://localhost:4040/contacts/${id}`);
     dispatch(deleteContactSuccess(id));
   } catch (error) {
     dispatch(deleteContactError(error));
